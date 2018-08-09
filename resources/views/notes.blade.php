@@ -48,17 +48,28 @@
 </style>
 <script>
     function addnew() {
-        var note=document.getElementById("note").value
+        var data=document.getElementById("note").value
         var x = new XMLHttpRequest();
-        x.open('GET','todo/add/' + note);
+        x.open('GET','todo/add/' + data);
         x.send();
         x.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
+                alert(this.responseText);
                 var jsondata=JSON.parse(this.responseText);
-               var date=jsondata.date;
+               var date=jsondata.time;
                var data=jsondata.data;
-               var elem=document.getElementById("board").lastChild;
-               alert(elem.innerHTML);exit;
+
+               var table = document.getElementById("board");
+
+                var row = table.insertRow(1);
+
+                var cell1 = row.insertCell(0);
+                var cell2 = row.insertCell(1);
+                var cell3 = row.insertCell(2);
+
+                cell1.innerHTML = data;
+                cell2.innerHTML = date;
+                cell3.innerHTML = " <span class=\"del close glyphicon glyphicon-remove-circle\"onclick=\"delet()\"></span><span class=\"up close glyphicon glyphicon-edit\"onclick=\"edit()\"></span>";
                 //document.getElementById("board").innerHTML="<tr><td>"+data+"</td><td>"+date+"</td><td><span class=\"del close glyphicon glyphicon-remove-circle\"onclick=\"delet()\"></span> <span class=\"up close glyphicon glyphicon-edit\"onclick=\"edit()\"></span> </td></tr>";
             }
         }
@@ -79,6 +90,7 @@
     }
 
     function edit() {
+        alert("edited");
         var x = new XMLHttpRequest();
         x.open('GET','edit' + id);
         x.send();
@@ -103,21 +115,24 @@
                 <th>Note</th>
                 <th colspan="3">Last edited</th>
             </tr>
-            <tr>
-                <th>Note</th>
-                <th colspan="3">Last edited</th>
-            </tr>
-            <tr>
+           @foreach($notes as $note)
+              <tr>
+                  <td>{{$note['data']}}</td>
+                  <td>{{$note['time']}}</td>
+                  <td>
+                      <span class="del close glyphicon glyphicon-remove-circle"onclick="delet()"></span>
+                      <span class="up close glyphicon glyphicon-edit"onclick="edit()"></span>
+                  </td>
+              </tr>
+            @endforeach
+           {{-- <tr>
                 <td>Dummy</td>
                 <td>2:00PM</td>
                 <td>
                     <span class="del close glyphicon glyphicon-remove-circle"onclick="delet()"></span>
                     <span class="up close glyphicon glyphicon-edit"onclick="edit()"></span>
                 </td>
-            </tr>
-            <tr>
-                <td>e</td>
-                <td>r</td></tr>
+            </tr>--}}
         </table>
 
 </div>

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Save;
-use Illuminate\Http\Request;
 
 class MainController extends Controller
 {
@@ -14,14 +13,30 @@ class MainController extends Controller
      */
     public function index()
     {
-          return view('notes');
+        $fullnote=$this->retrieveAllDb();
+
+        return view('notes',['notes'=>$fullnote]);
     }
-
-
+    
     public function add($note)
     {
-        $data=['data'=>$note,'date'=>'xx-ee-rr'];
-        return $data;
+        $saveObj= new Save();
+        $notes=['data'=>$note,'time'=>'2018-08-08'];
+        $saveObj->insertNote($notes);
+        return $this->retrieveDb();
+    }
+
+    public function retrieveDb()
+    {
+        $saveObj= new Save();
+        $note=$saveObj->takeNote();
+        return $note;
+    }
+    public function retrieveAllDb()
+    {
+        $saveObj= new Save();
+        $note=$saveObj->takeNotes();
+        return $note;
     }
 
     public function edit()

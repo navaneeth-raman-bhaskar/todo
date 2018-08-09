@@ -17,5 +17,6 @@ Route::get('/', function () {
 
 Route::get('/todo/','MainController@index');
 Route::get('/todo/add/{note}','MainController@add');
+//Route::get('/tod/get','MainController@retrieveDb');
 Route::get('/todo/edit','MainController@edit');
 Route::get('/todo/remove','MainController@remove');

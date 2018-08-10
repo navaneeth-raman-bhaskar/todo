@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Save;
+use App\NoteModel;
 
 class MainController extends Controller
 {
@@ -20,33 +20,43 @@ class MainController extends Controller
     
     public function add($note)
     {
-        $saveObj= new Save();
-        $notes=['data'=>$note,'time'=>'2018-08-08'];
-        $saveObj->insertNote($notes);
-        return $this->retrieveDb();
+        $saveObj= new NoteModel();
+
+        $saveObj->data=$note;//dynamic cretion of member variable
+        $saveObj->save();//built in save function
+        return json_encode($saveObj);
+
+//        $notes=['data'=>$note,'time'=>'2018-08-08'];
+//        $saveObj->insertNote($notes);
+//        return $this->retrieveDb();
     }
 
     public function retrieveDb()
     {
-        $saveObj= new Save();
+        $saveObj= new NoteModel();
         $note=$saveObj->takeNote();
         return $note;
     }
     public function retrieveAllDb()
     {
-        $saveObj= new Save();
+        $saveObj= new NoteModel();
         $note=$saveObj->takeNotes();
         return $note;
     }
 
-    public function edit()
+    public function edit($id,$data)
     {
-        //
+        $editObj= new NoteModel();
+        $stat=$editObj->editNote($id,$data);
+        return $stat;
+
     }
 
 
-    public function remove()
+    public function remove($id)
     {
-        //
+        $delObj= new NoteModel();
+        $stat=$delObj->removeNote($id);
+       return $stat;
     }
 }

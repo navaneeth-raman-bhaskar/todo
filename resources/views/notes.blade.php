@@ -1,11 +1,12 @@
 <link rel="stylesheet" href="{{ asset('css/app.css')}}">
+<link rel="stylesheet" href="{{ asset('css/modalcss.css')}}">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <style>
     .container{
-        width:50%;
+        width:75%;
         margin: auto;
     }
-    .board{
+    #board{
        background-color:ghostwhite;
     }
     h1{
@@ -44,6 +45,10 @@
     .up:hover{
         color: #17a2b8;
     }
+    td:first-child{
+        width: 250px;
+    }
+
 
 </style>
 <script>
@@ -54,34 +59,42 @@
         x.send();
         x.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
-                alert(this.responseText);
-                var jsondata=JSON.parse(this.responseText);
-               var date=jsondata.time;
+               var jsondata=JSON.parse(this.response);
+               var crtime=jsondata.created_at;
+               var uptime=jsondata.updated_at;
                var data=jsondata.data;
-
+               var id=jsondata.id;
                var table = document.getElementById("board");
-
                 var row = table.insertRow(1);
-
                 var cell1 = row.insertCell(0);
                 var cell2 = row.insertCell(1);
                 var cell3 = row.insertCell(2);
+                var cell4 = row.insertCell(3);
+
 
                 cell1.innerHTML = data;
-                cell2.innerHTML = date;
-                cell3.innerHTML = " <span class=\"del close glyphicon glyphicon-remove-circle\"onclick=\"delet()\"></span><span class=\"up close glyphicon glyphicon-edit\"onclick=\"edit()\"></span>";
+                cell2.innerHTML = crtime;
+                cell3.innerHTML = uptime;
+                cell4.setAttribute('noteId', id);
+                cell4.innerHTML = " <span class=\"del close glyphicon glyphicon-remove-circle\"onclick=\"delet(this)\"></span><span class=\"up close glyphicon glyphicon-edit\"onclick=\"edit(this)\"></span>";
                 //document.getElementById("board").innerHTML="<tr><td>"+data+"</td><td>"+date+"</td><td><span class=\"del close glyphicon glyphicon-remove-circle\"onclick=\"delet()\"></span> <span class=\"up close glyphicon glyphicon-edit\"onclick=\"edit()\"></span> </td></tr>";
             }
         }
     }
-    function delet() {
-        alert("deleted");
+    function delet(e) {
+        alert("Want to delete? press OK!");
+        var id = e.parentElement.getAttribute('noteId');
         var x = new XMLHttpRequest();
-        x.open('GET','delete' + id);
+        x.open('GET','todo/remove/' + id);
+
         x.send();
         x.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
-                document.getElementById("board").innerHTML = this.responseText;
+                var status=this.responseText;
+                if (status) {
+                    var row=e.parentElement.parentElement;
+                    row.remove();
+                }
             }
         }
     }
@@ -89,15 +102,36 @@
        document.getElementById("note").value="";
     }
 
-    function edit() {
-        alert("edited");
+    function edit(e) {
+        var id = e.parentElement.getAttribute('noteId');
+        openModal();
         var x = new XMLHttpRequest();
-        x.open('GET','edit' + id);
+        var data="updated text";
+        x.open('GET','todo/edit/{id}/{data}' + id+'/'+data);
         x.send();
         x.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
-                document.getElementById("board").innerHTML = this.responseText;
+            if (this.readyState == 4 && this.status == 200){
+                var status= this.responseText;
+                alert("status value= "+status);
             }
+        }
+    }
+    function openModal() {
+        var modal = document.getElementById('modalId');
+
+        document.getElementsByClassName('modalcontain')[0].style.display = "block";
+exit;
+// When the user clicks on <span> (x), close the modal
+        document.getElementById('close').onclick = function() {
+            modal.style.display = "none";
+        }
+
+
+    }
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
         }
     }
 </script>
@@ -113,15 +147,17 @@
         <table id="board" class="table table-striped">
             <tr>
                 <th>Note</th>
+                <th>Created at</th>
                 <th colspan="3">Last edited</th>
             </tr>
            @foreach($notes as $note)
               <tr>
                   <td>{{$note['data']}}</td>
-                  <td>{{$note['time']}}</td>
-                  <td>
-                      <span class="del close glyphicon glyphicon-remove-circle"onclick="delet()"></span>
-                      <span class="up close glyphicon glyphicon-edit"onclick="edit()"></span>
+                  <td>{{$note['created_at']}}</td>
+                  <td>{{$note['updated_at']}}</td>
+                  <td noteid="{{$note['id']}}">
+                      <span class="del close glyphicon glyphicon-remove-circle"onclick="delet(this)"></span>
+                      <span class="up close glyphicon glyphicon-edit"onclick="edit(this)"></span>
                   </td>
               </tr>
             @endforeach
@@ -134,5 +170,23 @@
                 </td>
             </tr>--}}
         </table>
-
 </div>
+    <!-- The Modal -->
+    <div id="modalId" class="modalContain">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit your note</h2>
+                <span class="close" id="close">&times;</span>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <buttton class="btn btn-success"></buttton><buttton class="btn btn-success"></buttton>
+            </div>
+        </div>
+
+    </div>
+

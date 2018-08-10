@@ -4,12 +4,12 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Save extends Model
+class NoteModel extends Model
 {
     protected $table='notes';
-   public function insertNote($data){
+//    public $timestamps = true;
+    public function insertNote($data){
 
-//       dd($data);
        $this->insert($data);
         return;
     }
@@ -19,8 +19,17 @@ class Save extends Model
         return $note;
     }
     function takeNotes(){
-        $id=$this->max('id');
         $note=$this->get();
         return $note;
+    }
+    function removeNote($id){
+        $status= $this->where('id',$id)->delete();
+        return $status;
+    }
+
+    function editNote($id,$data){
+        $stat=$this->where('id', $id)
+            ->update(['data' => $data]);
+        return $stat;
     }
 }

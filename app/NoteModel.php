@@ -13,8 +13,7 @@ class NoteModel extends Model
        $this->insert($data);
         return;
     }
-    function takeNote(){
-        $id=$this->max('id');
+    function takeNote($id){
         $note=$this->where('id',$id)->first();
         return $note;
     }

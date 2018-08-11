@@ -31,10 +31,10 @@ class MainController extends Controller
 //        return $this->retrieveDb();
     }
 
-    public function retrieveDb()
+    public function retrieveDb($id)
     {
         $saveObj= new NoteModel();
-        $note=$saveObj->takeNote();
+        $note=$saveObj->takeNote($id);
         return $note;
     }
     public function retrieveAllDb()
@@ -47,8 +47,9 @@ class MainController extends Controller
     public function edit($id,$data)
     {
         $editObj= new NoteModel();
-        $stat=$editObj->editNote($id,$data);
-        return $stat;
+        $editObj->editNote($id,$data);
+
+        return json_encode($this->retrieveDb($id));
 
     }
 

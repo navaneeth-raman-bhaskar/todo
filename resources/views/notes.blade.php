@@ -104,35 +104,41 @@
 
     function edit(e) {
         var id = e.parentElement.getAttribute('noteId');
-        openModal();
-        var x = new XMLHttpRequest();
-        var data="updated text";
-        x.open('GET','todo/edit/{id}/{data}' + id+'/'+data);
-        x.send();
-        x.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200){
-                var status= this.responseText;
-                alert("status value= "+status);
+        show(e);
+        document.getElementById('done').onclick=function () {
+            var data=document.getElementById('upTextId').value;
+
+            var x = new XMLHttpRequest();
+            x.open('GET','todo/edit/' +id+'/'+data);
+            x.send();
+            x.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200){
+                    var jsondata= JSON.parse(this.responseText);
+                    var data=jsondata.data;
+                    var update=jsondata.updated_at;
+                    var row=e.parentElement.parentElement;
+                    row.cells[0].innerHTML=data;
+                    row.cells[2].innerHTML=update;
+                    hide();
+                }
             }
-        }
+        };
     }
-    function openModal() {
+    function show(e) {
         var modal = document.getElementById('modalId');
-
-        document.getElementsByClassName('modalcontain')[0].style.display = "block";
-exit;
-// When the user clicks on <span> (x), close the modal
-        document.getElementById('close').onclick = function() {
-            modal.style.display = "none";
-        }
-
-
+        modal.style.display = "block";
+        document.getElementById('upTextId').value=e.parentElement.parentElement.cells[0].innerHTML;
+    return;
     }
-    // When the user clicks anywhere outside of the modal, close it
-    window.onclick = function(event) {
+    /*window.onclick = function(event) {
         if (event.target == modal) {
             modal.style.display = "none";
         }
+    }*/
+    function hide() {
+      var e =document.getElementById('modalId');
+        e.style.display = "none";
+        return;
     }
 </script>
 
@@ -161,14 +167,6 @@ exit;
                   </td>
               </tr>
             @endforeach
-           {{-- <tr>
-                <td>Dummy</td>
-                <td>2:00PM</td>
-                <td>
-                    <span class="del close glyphicon glyphicon-remove-circle"onclick="delet()"></span>
-                    <span class="up close glyphicon glyphicon-edit"onclick="edit()"></span>
-                </td>
-            </tr>--}}
         </table>
 </div>
     <!-- The Modal -->
@@ -178,13 +176,14 @@ exit;
         <div class="modal-content">
             <div class="modal-header">
                 <h2>Edit your note</h2>
-                <span class="close" id="close">&times;</span>
+                <span onclick="hide()" class="close" id="close">&times;</span>
             </div>
             <div class="modal-body">
-
+                <input class="form-control" type="text" id="upTextId">
             </div>
-            <div class="modal-footer">
-                <buttton class="btn btn-success"></buttton><buttton class="btn btn-success"></buttton>
+            <div class="modal-foot">
+                <buttton onclick="hide()" class="btn btn-danger">Cancel</buttton>
+                <buttton id="done" class="btn btn-success">Update</buttton>
             </div>
         </div>
 

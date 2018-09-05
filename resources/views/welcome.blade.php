@@ -62,10 +62,21 @@
             .m-b-md {
                 margin-bottom: 30px;
             }
+            .to{
+                font-size: 100px;
+                text-decoration: none;
+                color: #e4606d;
+                text-align: center;
+                display: block;
+                width: 50%;
+                margin: auto;
+
+            }
         </style>
     </head>
-    <body>
-        <div class="flex-center position-ref full-height">
+    <body>            <a href="{{'/todo'}}" class="to btn btn-alert">TODO</a>
+
+    <div class="flex-center position-ref full-height">
             @if (Route::has('login'))
                 <div class="top-right links">
                     @auth

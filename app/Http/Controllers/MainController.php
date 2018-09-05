@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\NoteModel;
+use Illuminate\Support\Facades\DB;
 
 class MainController extends Controller
 {
@@ -40,7 +41,8 @@ class MainController extends Controller
     public function retrieveAllDb()
     {
         $saveObj= new NoteModel();
-        $note=$saveObj->takeNotes();
+       $note=$saveObj->takeNotes();
+       // $note=DB::table('notes')->get();// db facades returns array instead of object
         return $note;
     }
 

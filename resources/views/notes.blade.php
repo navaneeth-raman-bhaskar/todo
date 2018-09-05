@@ -1,6 +1,9 @@
 <link rel="stylesheet" href="{{ asset('css/app.css')}}">
 <link rel="stylesheet" href="{{ asset('css/modalcss.css')}}">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css">
+<script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.2.min.js"></script>
+<script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js"></script>
 <style>
     .container{
         width:75%;
@@ -53,7 +56,10 @@
 </style>
 <script>
     function addnew() {
-        var data=document.getElementById("note").value
+        var dataElement=document.getElementById("note");
+        var data=dataElement.value;
+        dataElement.value="";
+
         var x = new XMLHttpRequest();
         x.open('GET','todo/add/' + data);
         x.send();
@@ -151,12 +157,15 @@
     <span class="ok close glyphicon glyphicon-ok" onclick="addnew()"></span>
 
         <table id="board" class="table table-striped">
+            <thead>
             <tr>
                 <th>Note</th>
                 <th>Created at</th>
                 <th colspan="3">Last edited</th>
             </tr>
-           @foreach($notes as $note)
+           </thead>
+            <tbody>
+        @foreach($notes as $note)
               <tr>
                   <td>{{$note['data']}}</td>
                   <td>{{$note['created_at']}}</td>
@@ -167,6 +176,7 @@
                   </td>
               </tr>
             @endforeach
+            </tbody>
         </table>
 </div>
     <!-- The Modal -->
@@ -188,4 +198,9 @@
         </div>
 
     </div>
+<script>
+    $(document).ready(function () {
+        $('#board').dataTable();
+    });
+</script>
 

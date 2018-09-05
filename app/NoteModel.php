@@ -8,6 +8,7 @@ class NoteModel extends Model
 {
     protected $table='notes';
 //    public $timestamps = true;
+//
     public function insertNote($data){
 
        $this->insert($data);
@@ -18,7 +19,8 @@ class NoteModel extends Model
         return $note;
     }
     function takeNotes(){
-        $note=$this->get();
+        $note=$this->latest()->get();
+
         return $note;
     }
     function removeNote($id){
